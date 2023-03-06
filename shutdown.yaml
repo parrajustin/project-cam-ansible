@@ -1,0 +1,12 @@
+---
+- name: Shutdown all
+  hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Run command
+    ansible.builtin.shell: "shutdown -h now"
+    args:
+      executable: /usr/bin/bash
+...

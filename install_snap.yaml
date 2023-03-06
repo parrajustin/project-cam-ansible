@@ -1,0 +1,19 @@
+---
+- name: Install snap
+  hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Gather package facts
+    package_facts:
+      manager: apt
+
+  - name: Install snap if absent
+    apt:
+      name: snapd
+      state: present
+    when: '"snapd" not in ansible_facts.packages'
+
+  - name: Run the snap command to install core package
+    ansible.builtin.shell: snap install core

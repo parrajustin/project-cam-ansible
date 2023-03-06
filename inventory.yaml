@@ -1,0 +1,23 @@
+all:
+  children:
+    root:
+      hosts:
+        debian-tower:
+          ansible_host: 192.168.0.10
+          ansible_user: USERNAME
+          ansible_password: PASSWORD
+    workers:
+      hosts:
+        soquartz-blade-1:
+          ansible_host: 192.168.0.11
+          ansible_user: USERNAME
+          ansible_password: PASSWORD
+        soquartz-blade-2:
+          ansible_host: 192.168.0.9
+          ansible_user: USERNAME
+          ansible_password: PASSWORD
+  vars:
+    ansible_become_method: sudo
+    ansible_become_user: root
+    ansible_become_password: PASSWORD
+

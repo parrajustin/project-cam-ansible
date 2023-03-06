@@ -1,0 +1,46 @@
+---
+
+- name: Install snap and microk8s
+  hosts: all
+  become: true
+  become_user: root
+
+  handlers:
+  - name: Reboot System
+    ansible.builtin.reboot:
+    when:
+      - skip_handlers | default("false") == "false"
+
+  - name: Microk8s ready
+    ansible.builtin.command:
+      cmd: microk8s.status --wait-ready
+    changed_when: false
+    when:
+      - skip_handlers | default("false") == "false"
+
+  tasks:
+  - name: Enable crgroups
+    ansible.builtin.import_tasks:
+      file: subtasks/cgroups.yml
+    tags:
+      - always
+      - microk8s
+
+  - name: Install microk8s
+    ansible.builtin.import_tasks:
+      file: subtasks/install.yml
+    tags:
+      - always
+      - microk8s
+
+  - name: Configure microk8s Users
+    ansible.builtin.include_tasks:
+      file: subtasks/configure-groups.yml
+    when:
+      - microk8s_users is defined
+      - microk8s_users not in ([], None, '', omit)
+    tags:
+      - microk8s
+      - microk8s.users
+      - notest
+...

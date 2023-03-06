@@ -1,0 +1,36 @@
+---
+
+- name: Set the hostname 
+  hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Set hostname
+    ansible.builtin.hostname:
+      name: "{{ inventory_hostname }}"
+
+  # - name: debug out the items
+  #   ansible.builtin.debug:
+  #     msg: "{{ hostvars[item].ansible_host }} {{ item }}"
+    # when: item != inventory_hostname
+    # loop: "{{ groups['all'] }}"
+
+  - name: Set /etc/hosts file
+    ansible.builtin.lineinfile:
+      dest: /etc/hosts
+      line: "{{ hostvars[item].ansible_host }} {{ item }}"
+      owner: root
+    when: item != inventory_hostname
+    loop: "{{ groups['all'] }}"
+
+  - name: Reboot the Server
+    reboot:
+      msg: "Reboot initiated by Ansible for hostname update"
+      connect_timeout: 5
+      reboot_timeout: 300
+      pre_reboot_delay: 0
+      post_reboot_delay: 30
+      test_command: uptime
+
+...

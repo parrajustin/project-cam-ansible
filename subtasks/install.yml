@@ -1,0 +1,63 @@
+---
+- name: Make sure dependencies are installed
+  ansible.builtin.apt:
+    name:
+      - snapd
+      - fuse
+      - udev
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  tags:
+    - microk8s
+    - microk8s.dependencies
+    - microk8s.dependencies.apt
+
+- name: Start and Enable Services
+  ansible.builtin.service:
+    name: "{{ microk8s_service }}"
+    state: started
+    enabled: true
+  with_items:
+    - snapd
+    - udev
+  loop_control:
+    loop_var: microk8s_service
+    label: "{{ microk8s_service }}"
+  tags:
+    - microk8s
+    - microk8s.dependencies
+    - microk8s.dependencies.services
+
+- name: Install microk8s
+  community.general.snap:
+    name: microk8s
+    classic: true
+    channel: stable
+  notify: Microk8s ready
+  tags:
+    - microk8s
+    - microk8s.install
+
+- name: Create kubectl alias
+  ansible.builtin.command:
+    cmd: snap alias microk8s.kubectl kubectl
+  changed_when: false
+  tags:
+    - microk8s
+    - microk8s.alias
+    - microk8s.alias.kubectl
+
+- name: Create helm3 alias
+  ansible.builtin.command:
+    cmd: snap alias microk8s.helm3 helm
+  changed_when: false
+  when:
+    - microk8s_plugins is defined
+    - microk8s_plugins.helm3 is defined
+    - microk8s_plugins.helm3
+  tags:
+    - microk8s
+    - microk8s.alias
+    - microk8s.alias.helm
+...

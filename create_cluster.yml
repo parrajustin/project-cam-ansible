@@ -1,0 +1,36 @@
+---
+
+- name: Master root run 
+  hosts: debian-tower
+  become: true
+  become_user: kube
+  debugger: on_failed
+
+  tasks:
+  - name: Run add nodes command
+    ansible.builtin.shell: "/snap/bin/microk8s add-node"
+    args:
+      executable: /usr/bin/bash
+    register: command_output
+
+  - name: Setting host facts using complex arguments
+    ansible.builtin.set_fact:
+      worker_cmd: "{{command_output.stdout | split('\n') | last }}"
+
+- name: Worker join cluster
+  hosts: workers
+  become: true
+  become_user: root
+  debugger: on_failed
+
+  tasks:
+  - name: Run add nodes command
+    ansible.builtin.shell: "/snap/bin/{{ hostvars['debian-tower']['worker_cmd'] }}"
+    register: command_output
+    ignore_errors: true
+    environment:
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+  
+  - debug: var=command_output
+...
