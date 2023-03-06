@@ -4,20 +4,30 @@ all:
       hosts:
         debian-tower:
           ansible_host: 192.168.0.10
-          ansible_user: USERNAME
-          ansible_password: PASSWORD
+          ansible_user: jrparra
     workers:
       hosts:
         soquartz-blade-1:
           ansible_host: 192.168.0.11
-          ansible_user: USERNAME
-          ansible_password: PASSWORD
         soquartz-blade-2:
           ansible_host: 192.168.0.9
-          ansible_user: USERNAME
-          ansible_password: PASSWORD
+      vars:
+        ansible_user: pleb
   vars:
     ansible_become_method: sudo
     ansible_become_user: root
-    ansible_become_password: PASSWORD
+    ansible_become_password: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            62666434653662333430653064613134383661663536383734323064616566346463313362323434
+            6366643136616164626633666662663038346364653333320a343239383431323832353932336635
+            37356664396666666633336338396564336534336333363462313534636532376366666333633839
+            3863623066666131300a313432633365316462643763623830613535333564353138356163376436
+            3366
+    ansible_password: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            64626234393732636137616239333965373938363937613534383763636463373133643066303962
+            6564626438643466353936303934373139353265653365380a323638613363303764646236336161
+            36653137353561326262616534383130373262626135653734323632356139336132346237333839
+            6664353962666164370a626131336361393566636633383865616133626463343732333831646464
+            3837
 

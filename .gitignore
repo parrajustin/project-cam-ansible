@@ -1,0 +1,7 @@
+kubectl
+kubectl.sha256
+
+secret.yml
+
+# Ignore inventory
+inventory.yaml

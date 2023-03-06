@@ -5,11 +5,11 @@ First update inventory with passwords and ip address of workers.
 run update with 
 
 ```bash
-ansible-playbook -i inventory.yaml update.yaml
+ansible-playbook -i inventory.yaml update.yaml --ask-vault-pass
 ```
 
 ```bash
-ansible-playbook -i inventory.yaml hostname.yaml
+ansible-playbook -i inventory.yaml hostname.yaml --ask-vault-pass
 ```
 
 Run install snap with
@@ -19,12 +19,12 @@ ansible-playbook -i inventory.yaml install_snap.yaml
 ``` -->
 
 ```bash
-ansible-playbook -i inventory.yaml install_k8s.yaml
+ansible-playbook -i inventory.yaml install_k8s.yaml --ask-vault-pass
 ```
 
 Now create the cluster
 ```bash
-ansible-playbook -i inventory.yaml create_cluster.yml
+ansible-playbook -i inventory.yaml create_cluster.yml --ask-vault-pass
 ```
 
 Now create the dashboard
