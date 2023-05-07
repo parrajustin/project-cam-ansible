@@ -1,0 +1,21 @@
+---
+- name: Master root run
+  hosts: debian-tower
+  become: true
+  become_user: kube
+  debugger: on_failed
+
+  handlers:
+    - name: Reboot System
+      ansible.builtin.reboot:
+      when:
+        - skip_handlers | default("false") == "false"
+
+  tasks:
+    - name: Run microk8s add hostpath storage
+      ansible.builtin.shell: "/snap/bin/microk8s disable minio:-h"
+      args:
+        executable: /usr/bin/bash
+      register: command_output
+
+    - debug: var=command_output

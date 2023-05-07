@@ -1,0 +1,25 @@
+---
+- name: Master root run
+  hosts: debian-tower
+  become: true
+  become_user: kube
+  debugger: on_failed
+
+  handlers:
+    - name: Reboot System
+      ansible.builtin.reboot:
+      when:
+        - skip_handlers | default("false") == "false"
+
+  tasks:
+    - name: Install helm
+      community.general.snap:
+        name: helm
+        classic: true
+        channel: stable
+      tags:
+        - helm
+        - helm.install
+
+    - name: Add helm repo
+      ansible.builtin.shell: "/snap/bin/helm repo add parrajustin https://parrajustin.github.io/parrajustin-charts/"
